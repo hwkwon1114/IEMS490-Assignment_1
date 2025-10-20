@@ -3,8 +3,11 @@ Manual and Automated Prompt Engineering
 Instructions on Running
 
 On Terminal, Type 
+
 docker build -t llm-assignment-1 .
+
 docker run -it -e GOOGLE_API_KEY="YOUR_ACTUAL_API_KEY_HERE" llm-assignment-1
+
 The api key will need to be replaced using Google AI Studio's API key which can be found here: https://aistudio.google.com/
 
 1. Dataset Overview
