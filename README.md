@@ -1,5 +1,6 @@
 # IEMS490:Assignment_1
 Manual and Automated Prompt Engineering
+
 Instructions on Running
 
 On Terminal, Type 
@@ -11,10 +12,13 @@ docker run -it -e GOOGLE_API_KEY="YOUR_ACTUAL_API_KEY_HERE" llm-assignment-1
 The api key will need to be replaced using Google AI Studio's API key which can be found here: https://aistudio.google.com/
 
 1. Dataset Overview
+2. 
 THe dataset is from the GSM8K and have randomly sampled 150 data points to use to predict the accuracy of the llm model. We have used the Gemini 2.5 Flash Lite model to evaluate the performance of the prompt engineering techniques. The Utils.py file contains all of the functions that initialize the chat model and the parsing function while there is a a python file associated with each part of the assignment.
 
-2. Vanilla Prompting (No Technique)
+3. Vanilla Prompting (No Technique)
+4. 
 The associated file for part 1 is Part1BasePrompt.py. The prompt that was used for the vanilla prompt was:
+
 """Read the following math question.
     Your task is to provide *only* the final numerical answer.
     Do not show your work. Do not use any text, units, or LaTeX.
@@ -26,6 +30,8 @@ The associated file for part 1 is Part1BasePrompt.py. The prompt that was used f
 The accuracy of the vanilla prompt was 28% as shown in the output documentation. The responses are documented in Vanilla_2.5.csv.
 
 3. Manual Prompt Engineering
+
+
 The associated file for part 2 is Part2CoT.py.I used the CoT technique with the role assignment technique to find the answer. While few shot technique was utilized to try optimize for the answer, the accuracy did not increase so the simple CoT technique was utilized. Here is the prompt that was used.
 """You are a helpful math assistant.
     1. Solve the following question by showing your reasoning step-by-step.
@@ -37,7 +43,9 @@ The associated file for part 2 is Part2CoT.py.I used the CoT technique with the 
     
 We were able to achieve an accuracy of 94.67%. The responses are saved in CoT.csv.
 
-4.The associated file for part 3 is Part3.py. The automated prompting process begins by partitioning the GSM8k dataset into a development set and a completely separate test set for final validation, ensuring no data leakage.
+4. Automated Prompt Engineering
+
+The associated file for part 3 is Part3.py. The automated prompting process begins by partitioning the GSM8k dataset into a development set and a completely separate test set for final validation, ensuring no data leakage.
 
 The algorithm is initialized with the best-performing manual prompt from Part 2, which is first evaluated on the development set to get a baseline score and an initial list of incorrectly answered questions. The core of the algorithm is an iterative loop that runs for five times:
 First, a "meta-prompt" is given the set of questions the current best prompt failed on, including the model's incorrect output.
