@@ -52,7 +52,7 @@ def run_evaluation(prompt_template, chat_model, dataframe, description="evaluati
     accuracy = results_df['is_correct'].sum() / num_questions if num_questions > 0 else 0.0
     failures_df = results_df[results_df['is_correct'] == False]
 
-    return accuracy, failures_df
+    return accuracy, failures_df, results_df
 
 def main():
     """
@@ -76,12 +76,12 @@ Answer: Let's think step by step.
     
     prompt_template = ChatPromptTemplate.from_template(current_best_prompt_str)
     # The optimization loop runs on the 'optimization_set'
-    current_best_score, failures_df = run_evaluation(prompt_template, chat_model, optimization_set, "Full Initial Evaluation")
+    current_best_score, failures_df, _ = run_evaluation(prompt_template, chat_model, optimization_set, "Full Initial Evaluation")
     
     print(f"Generation 0 | Initial Score: {current_best_score * 100:.2f}% | Failures: {len(failures_df)}")
 
     # --- 3. THE OPTIMIZATION LOOP ---
-    num_generations = 5
+    num_generations = 10
     for gen in range(num_generations):
         print(f"\n--- Starting Generation {gen + 1}/{num_generations} ---")
 
@@ -98,7 +98,6 @@ Answer: Let's think step by step.
         output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
         format_instructions = output_parser.get_format_instructions()
 
-        # --- CHANGE: Update the meta-prompt to include format instructions ---
         meta_prompt_template_str = """You are an expert prompt engineer. Your task is to analyze failed math problems and rewrite a prompt to fix them.
 
 --- FAILURE ANALYSIS REPORT ---
@@ -126,7 +125,6 @@ Original Prompt:
         response = chat_model.invoke(mutation_prompt)
         
         try:
-            # --- CHANGE: Parse the structured output ---
             parsed_output = output_parser.parse(response.content)
             new_candidate_prompt_str = parsed_output['new_prompt']
             print("Successfully parsed new candidate prompt.")
@@ -137,12 +135,12 @@ Original Prompt:
         candidate_template = ChatPromptTemplate.from_template(new_candidate_prompt_str)
 
         print(f"Pre-screening new prompt on {len(failures_df)} known failures...")
-        targeted_accuracy, _ = run_evaluation(candidate_template, chat_model, failures_df, "Targeted Re-Test")
+        targeted_accuracy, _, _ = run_evaluation(candidate_template, chat_model, failures_df, "Targeted Re-Test")
 
         if targeted_accuracy > 0:
             print(f"Candidate fixed {targeted_accuracy*100:.2f}% of failures. Promoting to full regression test.")
             
-            full_accuracy, new_failures = run_evaluation(candidate_template, chat_model, optimization_set, "Full Regression Test")
+            full_accuracy, new_failures, _ = run_evaluation(candidate_template, chat_model, optimization_set, "Full Regression Test")
             
             if full_accuracy > current_best_score:
                 print(f"IMPROVEMENT FOUND! New Score: {full_accuracy*100:.2f}% | Old Score: {current_best_score*100:.2f}%")
@@ -163,14 +161,14 @@ Original Prompt:
     print("\n--- Running Final Evaluation on the Held-Out Test Set ---")
     final_prompt_template = ChatPromptTemplate.from_template(current_best_prompt_str)
     # The final evaluation runs on the separate 'test_set'
-    final_accuracy, final_results_df = run_evaluation(final_prompt_template, chat_model, test_set, "Final Test")
+    final_accuracy, _, final_results_df= run_evaluation(final_prompt_template, chat_model, test_set, "Final Test")
     
     print(f"\nFinal Accuracy on Test Set: {final_accuracy * 100:.2f}%")
     
     final_results_df.to_csv("Part3.csv", index=False)
-    print("Final results saved to auto_prompt_results.csv")
+    print("Final results saved to Part3.csv")
     
-    best_prompt_filename = "best_prompt1.txt"
+    best_prompt_filename = "best_prompt.txt"
     with open(best_prompt_filename, "w") as f:
         f.write(current_best_prompt_str)
     print(f"Final optimized prompt saved to {best_prompt_filename}")

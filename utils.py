@@ -5,7 +5,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 def setup_api_key():
     if "GOOGLE_API_KEY" not in os.environ:
-        os.environ["GOOGLE_API_KEY"] = "YOUR_KEY_HERE"
+        os.environ["GOOGLE_API_KEY"] = "AIzaSyCW0I7EHguT3uYGitlHzSwHXuXynaboReA"
         # Load Dataset from Pandas
 
 def data_sample():
