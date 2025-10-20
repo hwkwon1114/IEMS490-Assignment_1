@@ -12,11 +12,11 @@ docker run -it -e GOOGLE_API_KEY="YOUR_ACTUAL_API_KEY_HERE" llm-assignment-1
 The api key will need to be replaced using Google AI Studio's API key which can be found here: https://aistudio.google.com/
 
 1. Dataset Overview
-2. 
+
 THe dataset is from the GSM8K and have randomly sampled 150 data points to use to predict the accuracy of the llm model. We have used the Gemini 2.5 Flash Lite model to evaluate the performance of the prompt engineering techniques. The Utils.py file contains all of the functions that initialize the chat model and the parsing function while there is a a python file associated with each part of the assignment.
 
-3. Vanilla Prompting (No Technique)
-4. 
+2. Vanilla Prompting (No Technique)
+
 The associated file for part 1 is Part1BasePrompt.py. The prompt that was used for the vanilla prompt was:
 
 """Read the following math question.
@@ -54,4 +54,4 @@ Next, this new candidate is first tested against only the known failed questions
 Full Regression Test & Selection: If the candidate shows promise, it is promoted to a full "regression test" on the entire development set. This ensures the changes didn't negatively impact previously correct answers. A new prompt is only adopted as the best prompt if its overall accuracy on this full test is strictly higher than the previous prompt.
 This process is repeated for five times, allowing the algorithm to learn from different wrong answers. The final, optimized prompt is then scored one last time against the unseen test set to get its final, unbiased accuracy.
 
-The accuracy was 95.33% on the same set of test data. The responses are saved at auto_prompt_results.csv and the optimized prompt is saved at best_prompt1.txt.
+The accuracy was 95.33% on the same set of test data. The responses are saved at Part3.csv and the optimized prompt is saved at best_prompt.txt.
